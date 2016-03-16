@@ -27,7 +27,7 @@ state-of-the-art voxel and triangle GPU ray tracing
 2. Erik Sintorn
 3. Ulf Assarsson
 
-#presnetors
+#Presentors
 
 1. Prateek Chandan
 2. Anurag Shirolkar

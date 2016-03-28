@@ -181,9 +181,76 @@
  
 \end{frame}
 
-\section{Second Main Section}
+\section{Previous Work}
+\subsection{Sparse Voxel Octrees}
+\begin{frame}{Sparse Voxel Octrees}
+\end{frame}
 
-\subsection{Another Subsection}
+\subsection{Common subtree merging}
+\begin{frame}{Common subtree merging}
+\end{frame}
+
+\subsection{Shadows}
+\begin{frame}{Shadows}
+\end{frame}
+
+\subsection{Ambient Occlusion}
+\begin{frame}{Ambient Occlusion}
+\end{frame}
+
+\section{Reducing a Sparse Voxel Tree to a DAG}
+\begin{frame}{Reducing a Sparse Voxel Tree to a DAG}
+	\includegraphics[scale=0.37]{fig2}{ Figure 2:Reducing a sparse voxel tree, illustrated using a binary tree, instead of an octree, for clarity.}
+	\begin{enumerate}[a.]
+		\item{The original tree.}
+		\item{Non-unique leaves are reduced.}
+		\item{Now, there are non-unique nodes in the level above the leaves. These are reduced, creating non-unique nodes in the level above this.}
+		\item{The process proceeds until we obtain our final directed acyclic graph.}
+	\end{enumerate}
+\end{frame}
+
+\begin{frame}{Terminology}
+	\begin{itemize}
+		\item{
+		Consider an $N^3$ voxel grid as a scene representation where each cell can be represented by a bit : \textbf{0} if empty and \textbf{1} if it contains geometry
+		}
+		\item{
+			A sparse voxel octree recursivley divided $L$ time gives us a hierarchical representation of and $N^3$ voxel grid, where $N = 2^L$ and L is called as \textit{max level}.
+		}
+		\item{
+			The sparse represnetation is achieved is achieved by culling away nodes that corresponds to empty space
+		}
+		\item{
+			A node is implemented with a \textit{childmask}, a bitmask of 8 bits where bit $i$ tells us if bit $i$  contains a geometry, and a pointer to first of non-empty children.
+		}
+		\item{
+			Child nodes are stored consecutively in memory	
+		}
+		\item{
+			The unique traversal \textit{path}, from root to a specific node in SVO, defines the voxel without storing spatial information explicitly in the node 
+		}
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}{The sparse voxel DAG}
+	\begin{itemize}
+		\item{
+		Consider an $N^3$ voxel grid as a scene representation where each cell can be represented by a bit : \textbf{0} if empty and \textbf{1} if it contains geometry
+		}
+		
+	\end{itemize}
+\end{frame}
+
+\section{Ray Tracing a Sparse Voxel DAG}
+
+\section{Evaluation}
+\subsection{Reduction Speed}
+\subsection{Memory Consumption}
+\subsection{Traversal Speed}
+
+\section{Conclusion}
+\section{Future Work}
 
 \begin{frame}{Blocks}
 \begin{block}{Block Title}

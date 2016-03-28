@@ -11,6 +11,7 @@
 % notice. 
 
 \documentclass{beamer}
+\usepackage{graphicx}
 
 % There are many different themes available for Beamer. A comprehensive
 % list with examples is given here:
@@ -45,34 +46,29 @@
 %\usetheme{Szeged}
 %\usetheme{Warsaw}
 
-\title{Presentation Title}
+\title{High Resolution Sparse Voxel DAGs}
 
-% A subtitle is optional and this may be deleted
-\subtitle{Optional Subtitle}
 
-\author{F.~Author\inst{1} \and S.~Another\inst{2}}
+\author{Prateek Chandan \and Anurag Shirolkar}
 % - Give the names in the same order as the appear in the paper.
 % - Use the \inst{?} command only if the authors have different
 %   affiliation.
 
-\institute[Universities of Somewhere and Elsewhere] % (optional, but mostly needed)
+\institute[IIT Bombay] % (optional, but mostly needed)
 {
-  \inst{1}%
+  \inst{}%
   Department of Computer Science\\
-  University of Somewhere
-  \and
-  \inst{2}%
-  Department of Theoretical Philosophy\\
-  University of Elsewhere}
+  IIT Bombay
+}
 % - Use the \inst command only if there are several affiliations.
 % - Keep it simple, no one is interested in your street address.
 
-\date{Conference Name, 2013}
+\date{CS 775}
 % - Either use conference name or its abbreviation.
 % - Not really informative to the audience, more for people (including
 %   yourself) who are reading the slides online
 
-\subject{Theoretical Computer Science}
+\subject{Advanced Computer Graphics}
 % This is only inserted into the PDF information catalog. Can be left
 % out. 
 
@@ -106,48 +102,83 @@
 
 % Section and subsections will appear in the presentation overview
 % and table of contents.
-\section{First Main Section}
+\section{Abstract}
 
-\subsection{First Subsection}
-
-\begin{frame}{First Slide Title}{Optional Subtitle}
-  \begin{itemize}
-  \item {
-    My first point.
-  }
-  \item {
-    My second point.
-  }
-  \end{itemize}
+	\begin{frame}{Abstract}
+	\begin{itemize}
+		\item {
+		A binary voxel grid can be represented more efficiently by using a Directed Acyclic Graph(DAG) than Sparse Voxel Octree(SVO)
+		}
+		\item {
+			Along with efficient encoding of empty regions , DAG allows efficient encoding of identical regions as nodes are allowed to share pointers
+		}
+		\item {
+			This paper presents a bottom-up algorithm to reduce a SVO to DAG
+		}
+		\item {
+			The memory consumption of DAG is significantly smaller and it would fit in memory where SVO won't
+		}
+		\item {
+			DAG requires no decompression and can be traversed easily
+		}
+		\item {
+			This paper demonstrates this by ray tracing hard and soft shadows , ambient occlusion , and primary rays in extremly high resolution DAG at speed at par or even faster than voxel and triangle GPU ray tracing.
+		}
+	\end{itemize}
 \end{frame}
 
-\subsection{Second Subsection}
+\section{Introduction}
 
 % You can reveal the parts of a slide one at a time
 % with the \pause command:
-\begin{frame}{Second Slide Title}
+\begin{frame}{Introduction}
   \begin{itemize}
   \item {
-    First item.
-    \pause % The slide will pause after showing the first item
+    There is increased interest in evaluating secondary rays for effects as reflection, shadows and indirect illumination. Due to the incoherence, a scondary scene representation is required with strict memory budget
+    
   }
   \item {   
-    Second item.
+    This acceleration structure has to be resident on RAM for effiecient access.
   }
-  % You can also specify when the content should appear
-  % by using <n->:
-  \item<3-> {
-    Third item.
+  \item{
+  However this is problematic when triangle meshes are augmented with displacement maps as they become infeasibly large to millions of polygons
+  \pause
   }
-  \item<4-> {
-    Fourth item.
+  \item {
+  	Recently Sparse Voxel Octree(SVO) has been used as a secondary scene representation, since they provide implicit LOD mechanism and can be efficiently ray traced in real time.
   }
-  % or you can use the \uncover command to reveal general
-  % content (not just \items):
-  \item<5-> {
-    Fifth item. \uncover<6->{Extra text in the fifth item.}
-  }
+  \item {
+  	At high resolution, SVO is still too much memory expensive, therefore it's application has been limited }
   \end{itemize}
+\end{frame}
+
+\begin{frame}{Introduction}
+  \begin{itemize}
+  \item {
+  		The data structure \textbf{DAG} allows for extremly high resolution enabling us to improve image quality, decrease discretization artifacts, explore high frequency effects like sharp shadows in large scenes.
+    }
+ 
+  \end{itemize}
+  \includegraphics[scale=0.36]{fig1}{C Figure 1: The EPIC CITADEL scene voxelized to a $128K^3$ resolution and stored as a Sparse Voxel DAG.}
+\end{frame}
+
+\begin{frame}{Introduction}
+  \begin{itemize}
+  \item {
+  		The paper presents and efficient technique for reducing the size of SVO by merging common subtrees and transforming to a DAG.
+    }
+    \item{
+    	This can dramatically reduce memory demands in real world scenes and scales even better with increased resolutions.
+    }
+    \item{
+    	This is based on assumption that the original DAG contains a large amount of redundant subtrees
+    }
+    \item{
+    	This paper implements and evaluates algorithms for calculating hard and soft shadows and ambitent occlusion by Ray tracing in DAG 
+    }
+ 
+  \end{itemize}
+ 
 \end{frame}
 
 \section{Second Main Section}

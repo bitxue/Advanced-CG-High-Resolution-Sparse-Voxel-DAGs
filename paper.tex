@@ -188,14 +188,35 @@
 
 \subsection{Common subtree merging}
 \begin{frame}{Common subtree merging}
+\begin{itemize}
+	\item work by Webber and Dillencourt [1989], where quadtrees  are compressed by merging common subtree
+	\item show a significant decrease (up to 10×) in the
+number of nodes required to represent a 512 × 512 binary image
+	\item Parker et al. [2003] extends this to three dimensions
+\end{itemize}
+\includegraphics[scale=0.3]{images/CSM.jpg}{ Figure 2:}
 \end{frame}
 
 \subsection{Shadows}
 \begin{frame}{Shadows}
+\begin{itemize}
+	\item \textit{image based methods} originating from the work by Williams [1978]
+	\item \textit{geometry based methods}, based on the idea of generating shadow volumes [Crow 1977]
+	\item third approach - \textit{view-sample mapping} [Aila and Laine 2004; Johnson et al.
+2005]
+	\item recent advancements
+\end{itemize}
 \end{frame}
 
 \subsection{Ambient Occlusion}
 \begin{frame}{Ambient Occlusion}
+\begin{itemize}
+	\item screen space ambient occlusion
+	\item precomputation of occlusion into texture [Kontkanen and Laine
+2005]
+	\item Ambient occlusion volumes [McGuire 2010]
+	\item Fast Ray-Cast Ambient Occlusion [Laine and Karras 2010]
+\end{itemize}
 \end{frame}
 
 \section{Reducing a Sparse Voxel Tree to a DAG}
@@ -244,10 +265,30 @@
 
 \section{Ray Tracing a Sparse Voxel DAG}
 
+\begin{frame}{Evaluation}
+	\includegraphics[scale=0.26]{images/scenes.png}{\\Figure 3:Scenes used in the experiments.}
+\end{frame}
+
 \section{Evaluation}
 \subsection{Reduction Speed}
+\begin{frame}{Reduction Speed}
+	\includegraphics[scale=0.23]{images/red-speed.png}{\\Figure 3:Time taken to reduce the SVOs to DAGs. The first row is the total time and the second row is the part of that spent on sorting.}
+	\begin{itemize}
+		\item Crassin et al. [2012] SVO - CRYSPONZA at resolution $512^3$ - 7.34ms
+		\item Laine and Karras [2010a] ESVO - HAIRBALL at resolution $1K^3$ -628s.
+	\end{itemize}
+	
+	
+\end{frame}
 \subsection{Memory Consumption}
+\begin{frame}{Memory Consumption}
+	\includegraphics[scale=0.27]{images/mem-consumption.png}{\\Figure 4:Comparison of the sparse voxel DAG, ESVO and SVO. Cases where the DAG has the smallest memory consumption are highlighted in green}
+\end{frame}
+
 \subsection{Traversal Speed}
+\begin{frame}{Traversal speed}
+
+\end{frame}
 
 \section{Conclusion}
 \section{Future Work}

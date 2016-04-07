@@ -298,6 +298,18 @@ number of nodes required to represent a 512 × 512 binary image
 
 \section{Ray Tracing a Sparse Voxel DAG}
 
+\begin{frame}{Ray Tracing a Sparse Voxel DAG}
+	\begin{itemize}
+	\item{The paper implements a GPU-based Raytracer in CUDA that efficiently traverses the scene representation}
+	\item{The raytracer is primarily used for visibility queries to evaluate hard shadows, soft shadows, and ambient occlusion
+	}
+	\item{Ambient occlusion is usually approximated by casting a number
+of rays over the hemisphere and averaging the occlusion of each
+ray}
+	
+	\end{itemize}
+\end{frame}
+
 \begin{frame}{Evaluation}
 	\includegraphics[scale=0.26]{images/scenes.png}{\\Figure 3:Scenes used in the experiments.}
 \end{frame}
@@ -324,9 +336,7 @@ number of nodes required to represent a 512 × 512 binary image
 \end{frame}
 
 \section{Conclusion}
-\section{Future Work}
-
-\begin{frame}{Blocks}
+\begin{frame}{Conclusion}
 \begin{block}{Block Title}
 You can also highlight sections of your presentation in a block, with it's own title
 \end{block}
@@ -337,12 +347,8 @@ There are separate environments for theorems, examples, definitions and proofs.
 Here is an example of an example block.
 \end{example}
 \end{frame}
-
-% Placing a * after \section means it will not show in the
-% outline or table of contents.
-\section*{Summary}
-
-\begin{frame}{Summary}
+\section{Future Work}
+\begin{frame}{Future Work}
   \begin{itemize}
   \item
     The \alert{first main message} of your talk in one or two lines.
@@ -363,6 +369,8 @@ Here is an example of an example block.
     \end{itemize}
   \end{itemize}
 \end{frame}
+
+
 
 \begin{frame}
 \begin{center}

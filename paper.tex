@@ -142,10 +142,9 @@
   }
   \item{
   However this is problematic when triangle meshes are augmented with displacement maps as they become infeasibly large to millions of polygons
-  \pause
   }
   \item {
-  	Recently Sparse Voxel Octree(SVO) has been used as a secondary scene representation, since they provide implicit LOD mechanism and can be efficiently ray traced in real time.
+  	Recently Sparse Voxel Octree(SVO) has been used as a secondary scene representation, since they can be efficiently ray traced in real time.
   }
   \item {
   	At high resolution, SVO is still too much memory expensive, therefore it's application has been limited }
@@ -239,9 +238,6 @@ number of nodes required to represent a 512 × 512 binary image
 			A sparse voxel octree recursivley divided $L$ time gives us a hierarchical representation of and $N^3$ voxel grid, where $N = 2^L$ and L is called as \textit{max level}.
 		}
 		\item{
-			The sparse represnetation is achieved is achieved by culling away nodes that corresponds to empty space
-		}
-		\item{
 			A node is implemented with a \textit{childmask}, a bitmask of 8 bits where bit $i$ tells us if bit $i$  contains a geometry, and a pointer to first of non-empty children.
 		}
 		\item{
@@ -257,10 +253,47 @@ number of nodes required to represent a 512 × 512 binary image
 \begin{frame}{The sparse voxel DAG}
 	\begin{itemize}
 		\item{
-		Consider an $N^3$ voxel grid as a scene representation where each cell can be represented by a bit : \textbf{0} if empty and \textbf{1} if it contains geometry
+		To Transform an SVO to a DAG we will use a bottom up approach.
+		}
+		\item{
+		The leaf nodes are defined by uniquely by childmask of 8-bit, so there can be atmost $2^8=256$ unique leaf nodes}
+		\item{
+		Steps of Reduction:
+			\begin{enumerate}
+				\item{Merge identical leaves with same bitmask}
+				\item{Proceed to level above and mege nodes with \textit{Identical childmask} and \textit{Identical pointers}}
+				\item{Iteratively perform this step by merging larger and larger subtrees}
+			\end{enumerate}
+		}
+		\item{The smallest possible DAG is guranteed to be found in L iterations}
+		\item{
+		This is also applicable for non-uniform octrees and partially reduced DAG's
+		}
+		\item{
+		This allows us to conveniently build DAGs from	SVOs too large to reside in RAM or on disk.
 		}
 		
 	\end{itemize}
+\end{frame}
+
+\begin{frame}{Implementation Details - DAG Construction}
+\begin{itemize}
+\item{While building a dag of level $L>10$ we first construct top L-10 levels by triangle/cube intersection in a top down fashion}
+\item{For each leaf we construct the subtree till mazimum depth}
+\item{The subtree is reduced to DAG and then we proceed to next leaf}
+\item{After all sub-DAG's get have been constructed, we have top-level SVO with many DAG}
+\item{We apply reduction one last time to produce one final DAG}
+\item{The result is same as if we processed complete SVO but the memory consumption while construction is considerably low}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Implementation Details - Merging Nodes}
+\begin{itemize}
+\item{We sort the nodes of a level using a \textit{256-bit} $($8 child * 32-bit pointer$)$ key and pointer as value}
+\item{Identical nodes become adjacent and can be compacted to a single nodes}
+\item{We also maintain a table of inderection, for each node we know the pointer to compacted node}
+\item{To imporve performance we store subtrees of resolution $4^3$ of last two rows into a 64-bit integer}
+\end{itemize}
 \end{frame}
 
 \section{Ray Tracing a Sparse Voxel DAG}
@@ -331,36 +364,13 @@ Here is an example of an example block.
   \end{itemize}
 \end{frame}
 
+\begin{frame}
+\begin{center}
+\Huge{Thanks}\\
 
 
-% All of the following is optional and typically not needed. 
-\appendix
-\section<presentation>*{\appendixname}
-\subsection<presentation>*{For Further Reading}
-
-\begin{frame}[allowframebreaks]
-  \frametitle<presentation>{For Further Reading}
-    
-  \begin{thebibliography}{10}
-    
-  \beamertemplatebookbibitems
-  % Start with overview books.
-
-  \bibitem{Author1990}
-    A.~Author.
-    \newblock {\em Handbook of Everything}.
-    \newblock Some Press, 1990.
- 
-    
-  \beamertemplatearticlebibitems
-  % Followed by interesting articles. Keep the list short. 
-
-  \bibitem{Someone2000}
-    S.~Someone.
-    \newblock On this and that.
-    \newblock {\em Journal of This and That}, 2(1):50--100,
-    2000.
-  \end{thebibliography}
+\LARGE{Questions?}
+\end{center}
 \end{frame}
 
 \end{document}

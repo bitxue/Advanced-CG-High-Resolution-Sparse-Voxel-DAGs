@@ -1,0 +1,387 @@
+% Copyright 2004 by Till Tantau <tantau@users.sourceforge.net>.
+%
+% In principle, this file can be redistributed and/or modified under
+% the terms of the GNU Public License, version 2.
+%
+% However, this file is supposed to be a template to be modified
+% for your own needs. For this reason, if you use this file as a
+% template and not specifically distribute it as part of a another
+% package/program, I grant the extra permission to freely copy and
+% modify this file as you see fit and even to delete this copyright
+% notice. 
+
+\documentclass{beamer}
+\usepackage{graphicx}
+
+% There are many different themes available for Beamer. A comprehensive
+% list with examples is given here:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+% You can uncomment the themes below if you would like to use a different
+% one:
+%\usetheme{AnnArbor}
+%\usetheme{Antibes}
+%\usetheme{Bergen}
+%\usetheme{Berkeley}
+%\usetheme{Berlin}
+%\usetheme{Boadilla}
+%\usetheme{boxes}
+%\usetheme{CambridgeUS}
+%\usetheme{Copenhagen}
+%\usetheme{Darmstadt}
+%\usetheme{default}
+%\usetheme{Frankfurt}
+%\usetheme{Goettingen}
+%\usetheme{Hannover}
+%\usetheme{Ilmenau}
+%\usetheme{JuanLesPins}
+%\usetheme{Luebeck}
+\usetheme{Madrid}
+%\usetheme{Malmoe}
+%\usetheme{Marburg}
+%\usetheme{Montpellier}
+%\usetheme{PaloAlto}
+%\usetheme{Pittsburgh}
+%\usetheme{Rochester}
+%\usetheme{Singapore}
+%\usetheme{Szeged}
+%\usetheme{Warsaw}
+
+\title{High Resolution Sparse Voxel DAGs}
+
+
+\author{Prateek Chandan \and Anurag Shirolkar}
+% - Give the names in the same order as the appear in the paper.
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+
+\institute[IIT Bombay] % (optional, but mostly needed)
+{
+  \inst{}%
+  Department of Computer Science\\
+  IIT Bombay
+}
+% - Use the \inst command only if there are several affiliations.
+% - Keep it simple, no one is interested in your street address.
+
+\date{CS 775}
+% - Either use conference name or its abbreviation.
+% - Not really informative to the audience, more for people (including
+%   yourself) who are reading the slides online
+
+\subject{Advanced Computer Graphics}
+% This is only inserted into the PDF information catalog. Can be left
+% out. 
+
+% If you have a file called "university-logo-filename.xxx", where xxx
+% is a graphic format that can be processed by latex or pdflatex,
+% resp., then you can add a logo as follows:
+
+% \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
+% \logo{\pgfuseimage{university-logo}}
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSubsection[]
+{
+  \begin{frame}<beamer>{Outline}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+}
+
+% Let's get started
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+  \tableofcontents
+  % You might wish to add the option [pausesections]
+\end{frame}
+
+% Section and subsections will appear in the presentation overview
+% and table of contents.
+\section{Abstract}
+
+	\begin{frame}{Abstract}
+	\begin{itemize}
+		\item {
+		A binary voxel grid can be represented more efficiently by using a Directed Acyclic Graph(DAG) than Sparse Voxel Octree(SVO)
+		}
+		\item {
+			Along with efficient encoding of empty regions , DAG allows efficient encoding of identical regions as nodes are allowed to share pointers
+		}
+		\item {
+			This paper presents a bottom-up algorithm to reduce a SVO to DAG
+		}
+		\item {
+			The memory consumption of DAG is significantly smaller and it would fit in memory where SVO won't
+		}
+		\item {
+			DAG requires no decompression and can be traversed easily
+		}
+		\item {
+			This paper demonstrates this by ray tracing hard and soft shadows , ambient occlusion , and primary rays in extremly high resolution DAG at speed at par or even faster than voxel and triangle GPU ray tracing.
+		}
+	\end{itemize}
+\end{frame}
+
+\section{Introduction}
+
+% You can reveal the parts of a slide one at a time
+% with the \pause command:
+\begin{frame}{Introduction}
+  \begin{itemize}
+  \item {
+    There is increased interest in evaluating secondary rays for effects as reflection, shadows and indirect illumination. Due to the incoherence, a scondary scene representation is required with strict memory budget
+    
+  }
+  \item {   
+    This acceleration structure has to be resident on RAM for effiecient access.
+  }
+  \item{
+  However this is problematic when triangle meshes are augmented with displacement maps as they become infeasibly large to millions of polygons
+  }
+  \item {
+  	Recently Sparse Voxel Octree(SVO) has been used as a secondary scene representation, since they can be efficiently ray traced in real time.
+  }
+  \item {
+  	At high resolution, SVO is still too much memory expensive, therefore it's application has been limited }
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Introduction}
+  \begin{itemize}
+  \item {
+  		The data structure \textbf{DAG} allows for extremly high resolution enabling us to improve image quality, decrease discretization artifacts, explore high frequency effects like sharp shadows in large scenes.
+    }
+ 
+  \end{itemize}
+  \includegraphics[scale=0.36]{fig1}{C Figure 1: The EPIC CITADEL scene voxelized to a $128K^3$ resolution and stored as a Sparse Voxel DAG.}
+\end{frame}
+
+\begin{frame}{Introduction}
+  \begin{itemize}
+  \item {
+  		The paper presents and efficient technique for reducing the size of SVO by merging common subtrees and transforming to a DAG.
+    }
+    \item{
+    	This can dramatically reduce memory demands in real world scenes and scales even better with increased resolutions.
+    }
+    \item{
+    	This is based on assumption that the original DAG contains a large amount of redundant subtrees
+    }
+    \item{
+    	This paper implements and evaluates algorithms for calculating hard and soft shadows and ambitent occlusion by Ray tracing in DAG 
+    }
+ 
+  \end{itemize}
+ 
+\end{frame}
+
+\section{Previous Work}
+\subsection{Sparse Voxel Octrees}
+\begin{frame}{Sparse Voxel Octrees}
+\begin{itemize}
+	\item An octree is a spatial data structure, which subdivides each node into 8 equally large subnodes
+	\item Sparse Voxel Octree has most of the nodes empty and its base primitive is a voxel.
+	\item \textit{Efficient Sparse Voxel Octree} - avoid building
+the octree to its maximal depth by providing each cubical voxel with
+a contour
+\end{itemize}
+\end{frame}
+
+\subsection{Common subtree merging}
+\begin{frame}{Common subtree merging}
+\begin{itemize}
+	\item Work by Webber and Dillencourt [1989], where quadtrees  are compressed by merging common subtree
+	\item Shows a significant decrease (up to 10×) in the
+number of nodes required to represent a 512 × 512 binary image
+	\item Parker et al. [2003] extends this to three dimensions
+\end{itemize}
+\includegraphics[scale=0.3]{images/CSM.jpg}{ Figure 2:}
+\end{frame}
+
+\subsection{Shadows}
+\begin{frame}{Shadows}
+\begin{itemize}
+	\item \textit{Image based methods} - occluders are somehow recorded as seen from light source in an image, which is later used to determine light visibility while rendering.
+	\item \textit{geometry based methods} - idea of generating shadow volumes that enclose shadowed space. Extended to Soft Shadow Volumes in case of area lights.
+	\item Due to recent advances in real-time ray tracing performance, casting a few shadow rays per pixel is now within reach for interactive applications
+\end{itemize}
+\end{frame}
+
+\subsection{Ambient Occlusion}
+\begin{frame}{Ambient Occlusion}
+\begin{itemize}
+	\item Technique to determine exposure of each point to ambient light.
+	\item \textit{Screen Space Ambient Occlusion} - Scaled down version of AO where only scene depth buffer is used to determine the occlusion.
+	\item In an alternative approach a volume is generated per primitive with occlusion being computed at runtime
+	\item \textit{Fast Ray-Cast Ambient Occlusion} - occlusion volume is limited by a hemisphere around the reciver point.
+\end{itemize}
+\end{frame}
+
+\section{Reducing a Sparse Voxel Tree to a DAG}
+\begin{frame}{Reducing a Sparse Voxel Tree to a DAG}
+	\includegraphics[scale=0.37]{fig2}{ Figure 2:Reducing a sparse voxel tree, illustrated using a binary tree, instead of an octree, for clarity.}
+	\begin{enumerate}[a.]
+		\item{The original tree.}
+		\item{Non-unique leaves are reduced.}
+		\item{Now, there are non-unique nodes in the level above the leaves. These are reduced, creating non-unique nodes in the level above this.}
+		\item{The process proceeds until we obtain our final directed acyclic graph.}
+	\end{enumerate}
+\end{frame}
+
+\begin{frame}{Terminology}
+	\begin{itemize}
+		\item{
+		Consider an $N^3$ voxel grid as a scene representation where each cell can be represented by a bit : \textbf{0} if empty and \textbf{1} if it contains geometry
+		}
+		\item{
+			A sparse voxel octree recursivley divided $L$ time gives us a hierarchical representation of and $N^3$ voxel grid, where $N = 2^L$ and L is called as \textit{max level}.
+		}
+		\item{
+			A node is implemented with a \textit{childmask}, a bitmask of 8 bits where bit $i$ tells us if bit $i$  contains a geometry, and a pointer to first of non-empty children.
+		}
+		\item{
+			Child nodes are stored consecutively in memory	
+		}
+		\item{
+			The unique traversal \textit{path}, from root to a specific node in SVO, defines the voxel without storing spatial information explicitly in the node 
+		}
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}{The sparse voxel DAG}
+	\begin{itemize}
+		\item{
+		To Transform an SVO to a DAG we will use a bottom up approach.
+		}
+		\item{
+		The leaf nodes are defined by uniquely by childmask of 8-bit, so there can be atmost $2^8=256$ unique leaf nodes}
+		\item{
+		Steps of Reduction:
+			\begin{enumerate}
+				\item{Merge identical leaves with same bitmask}
+				\item{Proceed to level above and mege nodes with \textit{Identical childmask} and \textit{Identical pointers}}
+				\item{Iteratively perform this step by merging larger and larger subtrees}
+			\end{enumerate}
+		}
+		\item{The smallest possible DAG is guranteed to be found in L iterations}
+		\item{
+		This is also applicable for non-uniform octrees and partially reduced DAG's
+		}
+		\item{
+		This allows us to conveniently build DAGs from	SVOs too large to reside in RAM or on disk.
+		}
+		
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Implementation Details - DAG Construction}
+\begin{itemize}
+\item{While building a dag of level $L>10$ we first construct top L-10 levels by triangle/cube intersection in a top down fashion}
+\item{For each leaf we construct the subtree till mazimum depth}
+\item{The subtree is reduced to DAG and then we proceed to next leaf}
+\item{After all sub-DAG's get have been constructed, we have top-level SVO with many DAG}
+\item{We apply reduction one last time to produce one final DAG}
+\item{The result is same as if we processed complete SVO but the memory consumption while construction is considerably low}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Implementation Details - Merging Nodes}
+\begin{itemize}
+\item{We sort the nodes of a level using a \textit{256-bit} $($8 child * 32-bit pointer$)$ key and pointer as value}
+\item{Identical nodes become adjacent and can be compacted to a single nodes}
+\item{We also maintain a table of inderection, for each node we know the pointer to compacted node}
+\item{To imporve performance we store subtrees of resolution $4^3$ of last two rows into a 64-bit integer}
+\end{itemize}
+\end{frame}
+
+\section{Ray Tracing a Sparse Voxel DAG}
+
+\begin{frame}{Ray Tracing a Sparse Voxel DAG}
+	\begin{itemize}
+	\item{The paper implements a GPU-based Raytracer in CUDA that efficiently traverses the scene representation}
+	\item{The raytracer is primarily used for visibility queries to evaluate hard shadows, soft shadows, and ambient occlusion
+	}
+	\item{Ambient occlusion is usually approximated by casting a number
+of rays over the hemisphere and averaging the occlusion of each
+ray}
+	
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Evaluation}
+	\includegraphics[scale=0.26]{images/scenes.png}{\\Figure 3:Scenes used in the experiments.}
+\end{frame}
+
+\section{Evaluation}
+\subsection{Reduction Speed}
+\begin{frame}{Reduction Speed}
+	\includegraphics[scale=0.23]{images/red-speed.png}{\\Figure 3:Time taken to reduce the SVOs to DAGs. The first row is the total time and the second row is the part of that spent on sorting.}
+	\begin{itemize}
+		\item Crassin et al. [2012] SVO - CRYSPONZA at resolution $512^3$ - 7.34ms
+		\item Laine and Karras [2010a] ESVO - HAIRBALL at resolution $1K^3$ -628s.
+	\end{itemize}
+	
+	
+\end{frame}
+\subsection{Memory Consumption}
+\begin{frame}{Memory Consumption}
+	\includegraphics[scale=0.27]{images/mem-consumption.png}{\\Figure 4:Comparison of the sparse voxel DAG, ESVO and SVO. Cases where the DAG has the smallest memory consumption are highlighted in green}
+\end{frame}
+
+\subsection{Traversal Speed}
+\begin{frame}{Traversal speed - Primary Rays}
+\includegraphics[scale=0.35]{images/primary.png}{}
+\end{frame}
+
+\begin{frame}{Traversal speed - Shadow Rays}
+\includegraphics[scale=0.35]{images/shadow.png}{}
+\end{frame}
+
+\begin{frame}{Traversal speed - Ambient Occlusion}
+\includegraphics[scale=0.35]{images/AO.png}{}
+\end{frame}
+
+\section{Conclusion}
+\begin{frame}{Conclusion}
+We have shown
+\begin{itemize}
+	\item that sparse voxel DAGs, an evolution of sparse
+voxel octrees, allow for an efficient encoding of identical regions of
+space
+	\item An algorithm to construct smallest possible DAG for the given Sparse Voxel Octree
+	\item that this construction is possible without having to store the entire SVO in memory
+	\item increase in node size is quickly amortized by reduction in node count.
+	\item Despite smaller memory footprint, our Data structure can be efficiently ray traced.
+\end{itemize}
+
+\end{frame}
+\section{Future Work}
+\begin{frame}{Future Work}
+\begin{itemize}
+  	\item The memory layout of the DAG used in this paper could potentially
+be improved
+	\item We could add material representation residing in a separate tree or DAG which would be used on finding intersection of ray and the geometry.
+	\item Future work could introduce cycles in the graph to fake unlimited resolution
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+\begin{center}
+\Huge{Thanks}\\
+
+
+\LARGE{Questions?}
+\end{center}
+\end{frame}
+
+\end{document}
+
+

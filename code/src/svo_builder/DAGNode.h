@@ -32,6 +32,25 @@ public:
 		parent_pos = -1;
 	}
 
+	void writeNode(FILE * dag_out) {
+		fwrite(&child_mask, sizeof(char), 1, dag_out);
+		for (int i = 0; i < 8; i++) {
+			if (get_bit(i, child_mask)) {
+				fwrite(children+i, sizeof(size_t), 1, dag_out);
+			}
+		}
+	}
+
+	void readNode(FILE * dag_in) {
+		fread(& child_mask, sizeof(char), 1, dag_in);
+		for (int i = 0; i < 8; i++) {
+			if (get_bit(i, child_mask)) {
+				fread(children+i, sizeof(size_t), 1, dag_in);
+			}
+			else children[i] = -1;
+		}
+	}
+
 	void copyFrom(Node n){
 		data = n.data;
 		for (int i = 0; i < 8; ++i)
@@ -56,10 +75,14 @@ public:
 	}
 };
 
-bool operator<(DAGNode *node1, DAGNode *node2) {
+bool operator<(const DAGNode &node1, const DAGNode &node2) {
 	for (int i = 0; i < 8; i++) {
-		if (node1->children[i] == node2->children[i]) continue;
-		return node1->children[i] < node2->children[i];
+		if (node1.children[i] == node2.children[i]) continue;
+		return node1.children[i] < node2.children[i];
 	}
 	return false;
+}
+
+void writeNode(FILE* node_out, const Node &n){
+	fwrite(& n.data, sizeof(size_t), 3, node_out);
 }

@@ -62,6 +62,13 @@ inline void readDataPoint(FILE* f, VoxelData &v){
 // Write an octree node to file
 inline size_t writeNode(FILE* node_out, const Node &n, size_t &b_node_pos){
 	fwrite(& n.data, sizeof(size_t), 3, node_out);
+	cout<<n.data<<" "<<n.children_base<<"\n";
+	for (int i = 0; i < 8; ++i)
+	{
+		int k = n.children_offset[i];
+		cout<<k<<" ";
+	}
+	cout<<"\n";
 	b_node_pos++;
 	return b_node_pos-1;
 }

@@ -2,3 +2,5 @@ svo_builder_binary
 tri_convert_binary
 svo_builder
 tri_convert
+dag_builder
+out*

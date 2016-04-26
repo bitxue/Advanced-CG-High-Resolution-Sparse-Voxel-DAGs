@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## SPECIFY TRIMESH LOCATION HERE (and do a make there first)
-TRIMESH_DIR=/home/anuragshirolkar/Desktop/sem8/cs775/project/ooc_svo_builder/src/trimesh2
+TRIMESH_DIR=../src/trimesh2
 SOURCE_DIR=../src/svo_builder/
 
 ## COMPILE AND LINK DEFINITIONS

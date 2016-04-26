@@ -1,0 +1,6 @@
+*.tri
+*.tridata
+*.octree
+*.octreedata
+*.octreenodes
+*.ply

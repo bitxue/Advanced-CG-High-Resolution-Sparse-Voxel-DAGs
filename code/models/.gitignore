@@ -4,3 +4,5 @@
 *.octreedata
 *.octreenodes
 *.ply
+*.dag
+*.dagnodes

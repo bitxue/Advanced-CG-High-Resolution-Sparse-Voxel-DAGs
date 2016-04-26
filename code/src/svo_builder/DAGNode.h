@@ -56,10 +56,10 @@ public:
 	}
 };
 
-bool operator<(DAGNode *node1, DAGNode *node2) {
+bool operator<(const DAGNode &node1,const DAGNode &node2) {
 	for (int i = 0; i < 8; i++) {
-		if (node1->children[i] == node2->children[i]) continue;
-		return node1->children[i] < node2->children[i];
+		if (node1.children[i] == node2.children[i]) continue;
+		return node1.children[i] < node2.children[i];
 	}
 	return false;
 }

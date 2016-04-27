@@ -48,6 +48,10 @@ public:
 	vector<DAGNode> reduced_nodes;
 	// Write DAG to a File
 	void write_to_file(string filename);
+	// Read DAG from .dag File
+	void read_from_dag_file(string filename);
+	// Read DAG from .octree File
+	void read_from_octree_file(string base_filename);
 	// Reduce octree to DAG
 	void reduce();
 	// create pointcloud to a pointcloud file
@@ -56,6 +60,42 @@ public:
 
 // Constructor to load from octree file
 DAGBuilder::DAGBuilder(string base_filename) {
+	
+}
+
+// Default constructor
+DAGBuilder::DAGBuilder(){
+	max_level = -1;
+	gridlength = 1024;
+}
+
+// Write data structure from File
+void DAGBuilder::write_to_file(string filename) {
+    FILE * dag_out;
+    dag_out = fopen(filename.c_str(),"wb");
+    size_t n_nodes = reduced_nodes.size();
+    fwrite(&n_nodes, sizeof(size_t), 1, dag_out);
+    fwrite(&gridlength, sizeof(size_t), 1, dag_out);
+    for (int i = 0; i < reduced_nodes.size(); i++) {
+            reduced_nodes[i].writeNode(dag_out);
+    }
+}
+
+void DAGBuilder::read_from_dag_file(string filename) {
+	reduced_nodes.clear();
+	FILE * dag_in;
+    dag_in = fopen(filename.c_str(),"wb");
+    size_t n_nodes = reduced_nodes.size();
+    fread(&n_nodes, sizeof(size_t), 1, dag_in);
+    fread(&gridlength, sizeof(size_t), 1, dag_in);
+    for (int i = 0; i < n_nodes; i++) {
+    	DAGNode current_node;
+        current_node.readNode(dag_in);
+        reduced_nodes.push_back(current_node);
+    }
+}
+
+void DAGBuilder::read_from_octree_file(string base_filename) {
 	string nodes_name = base_filename + string(".octreenodes");
 	FILE* node_in = fopen(nodes_name.c_str(),"rb");
 
@@ -75,21 +115,6 @@ DAGBuilder::DAGBuilder(string base_filename) {
 	max_level = -1;
 	// label Nodes based on DFS Number and assign parents
 	labelNodesDFS();
-}
-
-// Default constructor
-DAGBuilder::DAGBuilder(){
-	max_level = -1;
-	gridlength = 1024;
-}
-
-// Write data structure from File
-void DAGBuilder::write_to_file(string filename) {
-        FILE * dag_out;
-        dag_out = fopen(filename.c_str(),"wb");
-        for (int i = 0; i < reduced_nodes.size(); i++) {
-                reduced_nodes[i].writeNode(dag_out);
-        }
 }
 
 // Reduce Voxel octree to DAG

@@ -178,7 +178,8 @@ void DAGBuilder::createPointCloudDFS(ofstream &outfile,int ind,int xoff,int yoff
 void DAGBuilder::createPointCloud(string filename){
 	ofstream outfile;
 	outfile.open(filename);
-	createPointCloudDFS(outfile,reduced_nodes.size()-1,0,0,0,gridlength);
+	if(max_level>=0)
+		createPointCloudDFS(outfile,reduced_nodes.size()-1,0,0,0,gridlength);
 	outfile.close();
 }
 

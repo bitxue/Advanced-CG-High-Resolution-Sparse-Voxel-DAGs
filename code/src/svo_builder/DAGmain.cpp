@@ -3,7 +3,7 @@
 using namespace std;
 
 void printHelp() {
-	std::cout << "Example: dag_builder -dag ../models/dragon1024_1.octree -out ../models/dragon1024_1.pts" << endl;
+	std::cout << "Example: dag_builder -oct ../models/dragon1024_1.octree -out ../models/dragon1024_1.pts" << endl;
 	std::cout << "" << endl;
 	std::cout << "All available program options:" << endl;
 	std::cout << "" << endl;
@@ -20,12 +20,13 @@ void printInvalid() {
 }
 
 string octreeFile , dagFile , ptsFile;
-int octree = 0,dag=0,pts=0;
+int octree = 0,dagF=0,pts=0;
 void parseProgramParameters(int argc, char* argv[]) {
 	cout << "Reading program parameters ..." << endl;
 	// Input argument validation
 	
 	for (int i = 1; i < argc; i++) {
+		cout<<"** "<<argv[i]<<endl;
 		// parse filename
 		if (string(argv[i]) == "-oct") {
 			octreeFile = argv[i + 1];
@@ -39,7 +40,7 @@ void parseProgramParameters(int argc, char* argv[]) {
 			}
 			i++;
 		}
-		if (string(argv[i]) == "-dag") {
+		else if (string(argv[i]) == "-dag") {
 			dagFile = argv[i + 1];
 			size_t check_tri = dagFile.find(".dag");
 			if (check_tri == string::npos) {
@@ -47,11 +48,11 @@ void parseProgramParameters(int argc, char* argv[]) {
 				printInvalid();
 				exit(0);
 			}else{
-				dag = 1;
+				dagF = 1;
 			}
 			i++;
 		}
-		if (string(argv[i]) == "-out") {
+		else if (string(argv[i]) == "-out") {
 			ptsFile = argv[i + 1];
 			pts = 1;
 			i++;
@@ -60,6 +61,7 @@ void parseProgramParameters(int argc, char* argv[]) {
 			printHelp(); exit(0);
 		}
 		else {
+			cout<<"Invalid argument :"<<argv[i]<<"\n";
 			printInvalid(); exit(0);
 		}
 	}
@@ -72,13 +74,23 @@ void parseProgramParameters(int argc, char* argv[]) {
 int main(int argc, char *argv[]){
 
 	parseProgramParameters(argc,argv);
-	string path = "../models/dragon1024_1";
-	DAGBuilder dag(path);
-	dag.reduce();
-	dag.write_to_file("../models/dragon1024.dag");
+	DAGBuilder dag;
+
+	if(octree){
+		cout<<"\n Reading from octree file at "<<octreeFile<<" ...\n";
+		dag.read_from_octree_file(octreeFile.substr(0,octreeFile.size()-7));
+		dag.reduce();
+		string dagout = octreeFile.substr(0,octreeFile.size()-6);
+		dagout+="dag";
+		cout<<"\n Writing octree to dag file at "<<dagout<<" ...\n";
+		dag.write_to_file(dagout);
+	}else if(dagF){
+		cout<<"\n Reading from dag file at "<<dagFile<<" ...\n";
+		dag.read_from_dag_file(dagFile);
+	}
 	
 	if(pts){
-		cout<<"\n\nCreating pointcloud from DAG at "<<ptsFile<<" ...\n";
+		cout<<"\nCreating pointcloud from DAG at "<<ptsFile<<" ...\n";
 		dag.createPointCloud(ptsFile);
 	}
 }

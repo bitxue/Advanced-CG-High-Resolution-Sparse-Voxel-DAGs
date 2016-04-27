@@ -48,6 +48,10 @@ public:
 	vector<DAGNode> reduced_nodes;
 	// Write DAG to a File
 	void write_to_file(string filename);
+	// Read DAG from .dag File
+	void read_from_dag_file(string filename);
+	// Read DAG from .octree File
+	void read_from_octree_file(string base_filename);
 	// Reduce octree to DAG
 	void reduce();
 	// create pointcloud to a pointcloud file
@@ -56,25 +60,7 @@ public:
 
 // Constructor to load from octree file
 DAGBuilder::DAGBuilder(string base_filename) {
-	string nodes_name = base_filename + string(".octreenodes");
-	FILE* node_in = fopen(nodes_name.c_str(),"rb");
-
-	OctreeInfo info;
-	parseOctreeHeader(base_filename + string(".octree"), info);
-
-	gridlength = info.gridlength;
-
-	for (int i = 0; i < info.n_nodes; i++)  {
-		Node n;
-		readNode(node_in, n);
-		DAGNode dn;
-		dn.copyFrom(n);
-		nodes.push_back(dn);
-	}
-
-	max_level = -1;
-	// label Nodes based on DFS Number and assign parents
-	labelNodesDFS();
+	
 }
 
 // Default constructor
@@ -95,7 +81,7 @@ void DAGBuilder::write_to_file(string filename) {
     }
 }
 
-void DAGBuilder::read_from_file(string filename) {
+void DAGBuilder::read_from_dag_file(string filename) {
 	reduced_nodes.clear();
 	FILE * dag_in;
     dag_in = fopen(filename.c_str(),"wb");
@@ -107,6 +93,28 @@ void DAGBuilder::read_from_file(string filename) {
         current_node.readNode(dag_in);
         reduced_nodes.push_back(current_node);
     }
+}
+
+void DAGBuilder::read_from_octree_file(string base_filename) {
+	string nodes_name = base_filename + string(".octreenodes");
+	FILE* node_in = fopen(nodes_name.c_str(),"rb");
+
+	OctreeInfo info;
+	parseOctreeHeader(base_filename + string(".octree"), info);
+
+	gridlength = info.gridlength;
+
+	for (int i = 0; i < info.n_nodes; i++)  {
+		Node n;
+		readNode(node_in, n);
+		DAGNode dn;
+		dn.copyFrom(n);
+		nodes.push_back(dn);
+	}
+
+	max_level = -1;
+	// label Nodes based on DFS Number and assign parents
+	labelNodesDFS();
 }
 
 // Reduce Voxel octree to DAG

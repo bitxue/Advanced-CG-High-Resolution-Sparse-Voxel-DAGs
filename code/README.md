@@ -57,6 +57,9 @@ The .dag file contains the following
 
 *For details of Other format and executables refer README_old.md*
 
+## Results
+See the following doc for experiment results and memory reduction reports
+https://docs.google.com/document/d/1Wr1Y1ruIordIbOn6mAJgJbVDMNp5JY9yw-4BJLFlTmc/edit?usp=sharing
 
 
 ## Acknowledgement and References

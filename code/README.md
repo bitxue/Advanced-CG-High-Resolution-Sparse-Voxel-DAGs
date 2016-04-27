@@ -48,6 +48,17 @@ The point cloud file ".pts" contains all the points with range in -1 to 1 in eac
 To view the point cloud , there is an executable pcloud included. If that executable didn't work. Please build it by following the instructions here
 https://www.cse.iitb.ac.in/~cs749/spr2016/a1/a1.html
 
+#DAG File Format
+The .dag file contains the following
+
+1. No of nodes
+2. Grid lenght
+3. The data of each node (Child mask and pointers)
+
+*For details of Other format and executables refer README_old.md*
+
+
+
 ## Acknowledgement and References
 
 1. The original Paper : http://www.cse.chalmers.se/~kampe/highResolutionSparseVoxelDAGs.pdf 

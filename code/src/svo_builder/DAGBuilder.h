@@ -85,11 +85,28 @@ DAGBuilder::DAGBuilder(){
 
 // Write data structure from File
 void DAGBuilder::write_to_file(string filename) {
-        FILE * dag_out;
-        dag_out = fopen(filename.c_str(),"wb");
-        for (int i = 0; i < reduced_nodes.size(); i++) {
-                reduced_nodes[i].writeNode(dag_out);
-        }
+    FILE * dag_out;
+    dag_out = fopen(filename.c_str(),"wb");
+    size_t n_nodes = reduced_nodes.size();
+    fwrite(&n_nodes, sizeof(size_t), 1, dag_out);
+    fwrite(&gridlength, sizeof(size_t), 1, dag_out);
+    for (int i = 0; i < reduced_nodes.size(); i++) {
+            reduced_nodes[i].writeNode(dag_out);
+    }
+}
+
+void DAGBuilder::read_from_file(string filename) {
+	reduced_nodes.clear();
+	FILE * dag_in;
+    dag_in = fopen(filename.c_str(),"wb");
+    size_t n_nodes = reduced_nodes.size();
+    fread(&n_nodes, sizeof(size_t), 1, dag_in);
+    fread(&gridlength, sizeof(size_t), 1, dag_in);
+    for (int i = 0; i < n_nodes; i++) {
+    	DAGNode current_node;
+        current_node.readNode(dag_in);
+        reduced_nodes.push_back(current_node);
+    }
 }
 
 // Reduce Voxel octree to DAG

@@ -17,7 +17,7 @@ echo "Removing old versions ..."
 rm -f dag_builder
 rm -f *.o
 
-${COMPILE_BINARY} ${SOURCE_DIR}DAGBuilder.cpp
+${COMPILE_BINARY} ${SOURCE_DIR}DAGmain.cpp
 ${LINK} *.o
 
 echo "Cleaning up ..."
